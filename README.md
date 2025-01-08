@@ -1,6 +1,6 @@
 # Summary of [sharjeelfaiq/express-postgres-prisma-auth-and-user-management](https://github.com/sharjeelfaiq/express-postgres-prisma-auth-and-user-management)
 
-This repository provides a **Node.js** template that implements **user authentication** and **management** using **Express.js** and **MongoDB**. It's designed to be a starting point for developers building web applications that require user-related functionalities like registration, login, and management.
+This repository provides a **Node.js** template that implements **user authentication** and **management** using **Express.js** and **PostgrSQL**. It's designed to be a starting point for developers building web applications that require user-related functionalities like registration, login, and management.
 
 ---
 
@@ -13,7 +13,7 @@ The purpose of the **express-postgres-prisma-auth-and-user-management** project 
 - **Enable User Management**: Provide **CRUD (Create, Read, Update, Delete)** functionalities for managing user accounts, allowing applications to handle user data easily.
 - **Serve as a Starter Template**: Act as a boilerplate for developers, saving time and effort in setting up user authentication systems from scratch.
 
-Overall, this project is geared towards helping developers quickly integrate robust user management features into their applications using **Express.js** and **MongoDB**.
+Overall, this project is geared towards helping developers quickly integrate robust user management features into their applications using **Express.js** and **PostgrSQL**.
 
 ---
 
@@ -32,7 +32,7 @@ Overall, this project is geared towards helping developers quickly integrate rob
 
 - **Node.js**: Server-side JavaScript runtime.
 - **Express.js**: Web framework for building APIs.
-- **MongoDB**: NoSQL database for fast and scalable data storage.
+- **PostgrSQL**: NoSQL database for fast and scalable data storage.
 - **JWT (JSON Web Tokens)**: Secure token-based authentication.
 
 ---
@@ -55,30 +55,37 @@ root/
 ├── node_modules/                       # Dependency packages
 │
 ├── src/                                # Application source code
-│   ├── controllers/                # Controllers for API endpoints
-│   │   ├── Auth/                   # Authentication-related logic
+│   ├── controllers/                    # Controllers for API endpoints
+│   │   ├── Auth/                       # Authentication-related logic
 │   │   │   └── index.js
-│   │   ├── User/                   # User-related logic
+│   │   ├── User/                       # User-related logic
 │   │   │   └── index.js
 │   │   └── index.js
-│   ├── database/                       # Database connection and utilities
+│   ├── dataAccess/                     # Data access layer for interacting with the database
 │   │   └── index.js
 │   ├── dtos/                           # Data Transfer Objects (DTOs)
 │   │   └── index.js
-│   ├── middlewares/                   # Middlewares for handling requests
+│   ├── middlewares/                    # Middlewares for handling requests
 │   │   └── index.js
-│   ├── models/                         # MongoDB models (user schema, etc.)
+│   ├── models/                         # PostgrSQL models (user schema, etc.)
 │   │   └── index.js
 │   ├── packages/                       # External libraries or helpers
 │   │   └── index.js
+│   ├── prisma/                         # Prisma ORM setup and configuration
+│   │   ├── migrations/                 # Database migrations
+│   │   └── schema.prisma
 │   ├── routes/                         # API routes for handling requests
+│   │   ├── Auth/                       # Authentication-related routes
+│   │   │   └── index.js
+│   │   ├── User/                       # User-related routes
+│   │   │   └── index.js
 │   │   └── index.js
 │   ├── server/                         # Application server setup
 │   │   └── index.js
-│   ├── services/                   # Services for handling business logic
-│   │   ├── Auth/                   # Authentication services
+│   ├── services/                       # Services for handling business logic
+│   │   ├── Auth/                       # Authentication services
 │   │   │   └── index.js
-│   │   ├── User/                   # User services
+│   │   ├── User/                       # User services
 │   │   │   └── index.js
 │   │   └── index.js
 │   ├── utils/                          # Utility functions for the app
@@ -92,3 +99,4 @@ root/
 ├── endpoints.md                        # API documentation for endpoints
 ├── package-lock.json                   # NPM package-lock file
 └── package.json                        # NPM dependencies and project metadata
+```
