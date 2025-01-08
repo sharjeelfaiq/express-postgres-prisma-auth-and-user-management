@@ -32,6 +32,7 @@ Overall, this project is geared towards helping developers quickly integrate rob
 - **Node.js**: Server-side JavaScript runtime.
 - **Express.js**: Web framework for building APIs.
 - **PostgrSQL**: NoSQL database for fast and scalable data storage.
+- **Prisma**: Modern ORM for database access and management.
 - **JWT (JSON Web Tokens)**: Secure token-based authentication.
 
 ---
