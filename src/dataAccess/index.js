@@ -1,4 +1,4 @@
-import { user } from "#models/index.js";
+import { user, blacklistedToken } from "#models/index.js";
 
 export const dataAccess = {
   createUser: async (name, email, hashedPassword) =>
@@ -12,15 +12,33 @@ export const dataAccess = {
   fetchAllUsers: async () => await user.findMany(),
   findUserById: async (id) =>
     await user.findUnique({
-      where: { id: Number(userId) },
+      where: { id: userId },
     }),
   updateUserById: async (id, userData) =>
     await user.update({
-      where: { id: Number(userId) },
+      where: { id: userId },
       data: userData,
     }),
   deleteUserById: async (id) =>
     await user.delete({
-      where: { id: Number(userId) },
+      where: { id: userId },
     }),
+  createBlacklistedToken: async (token, expiresAt, userId) => {
+    return await blacklistedToken.create({
+      data: {
+        token,
+        expiresAt,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+  },
+  findBlacklistedToken: async (token) => {
+    return await blacklistedToken.findUnique({
+      where: { token },
+    });
+  },
 };

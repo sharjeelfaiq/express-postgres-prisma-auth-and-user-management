@@ -7,7 +7,6 @@ export const AuthController = {
 
       const result = await AuthService.signUp(userData);
 
-      // Check if result contains an error status
       if (result.status && result.status >= 400) {
         return res.status(result.status).json({ message: result.message });
       }

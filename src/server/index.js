@@ -8,7 +8,9 @@ const listenServer = (app) => {
   const server = createServer(app);
 
   server.listen(PORT || 5000, () => {
-    logger.info(`The server is accessible at http://localhost:5000`.white.bold);
+    logger.info(
+      `The server is accessible at http://localhost:${PORT}`.white.bold,
+    );
   });
 };
 

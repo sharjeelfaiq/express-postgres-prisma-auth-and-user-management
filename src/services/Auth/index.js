@@ -6,11 +6,11 @@ const {
   hashPassword,
   comparePassword,
   generateToken,
-  expireToken,
+  verifyToken,
   handleError,
 } = utility;
 
-const { createUser, findUserByEmail } = dataAccess;
+const { createUser, findUserByEmail, createBlacklistedToken } = dataAccess;
 
 export const AuthService = {
   signUp: async ({ name, email, password }) => {
@@ -36,7 +36,7 @@ export const AuthService = {
       return handleError(error, "Failed to sign up user");
     }
   },
-  signIn: async ({ email, password }) => {
+  signIn: async ({ email, password, isRemembered }) => {
     try {
       const existingUser = await findUserByEmail(email);
       if (!existingUser) throw createError(401, "Invalid credentials");
@@ -44,7 +44,7 @@ export const AuthService = {
       const isValid = await comparePassword(password, existingUser.password);
       if (!isValid) throw createError(401, "Invalid credentials");
 
-      const token = generateToken(existingUser.id);
+      const token = generateToken(isRemembered, existingUser.id);
 
       const result = {
         email: existingUser.email,
@@ -59,7 +59,14 @@ export const AuthService = {
   },
   signOut: async ({ token }) => {
     try {
-      await expireToken(token);
+      const userId = await verifyToken(token);
+      const expiresAt = new Date(new Date().getTime() + 60 * 60 * 1000);
+      const blacklistedToken = await createBlacklistedToken(
+        token,
+        expiresAt,
+        userId
+      );
+
       return "Successfully signed out";
     } catch (error) {
       return handleError(error, "Failed to sign out user");

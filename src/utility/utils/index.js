@@ -1,8 +1,13 @@
-import { bcrypt, jwt, createError, winston } from "#packages/index.js";
+import { jwt, createError, winston, bcrypt } from "#packages/index.js";
 import { blacklistedToken } from "#models/index.js";
 import { env } from "../env/index.js";
 
-const { NODE_ENV, JWT_SECRET_KEY, JWT_EXPIRATION_TIME } = env;
+const {
+  NODE_ENV,
+  JWT_SECRET_KEY,
+  JWT_SHORT_EXPIRATION_TIME,
+  JWT_LONG_EXPIRATION_TIME,
+} = env;
 
 const createLogger = () => {
   const logConfig = {
@@ -27,7 +32,7 @@ const createLogger = () => {
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
     winston.format.printf(({ level, message, timestamp }) => {
       return `${timestamp} [${level}]: ${message}`;
-    }),
+    })
   );
 
   return winston.createLogger({
@@ -75,10 +80,11 @@ export const utility = {
       return handleError(error, "Error comparing password");
     }
   },
-  generateToken: (userId) => {
+  generateToken: (isRemembered, userId) => {
     try {
       const token = jwt.sign({ id: userId }, JWT_SECRET_KEY, {
-        expiresIn: JWT_EXPIRATION_TIME,
+        expiresIn:
+          isRemembered ? JWT_LONG_EXPIRATION_TIME : JWT_SHORT_EXPIRATION_TIME,
       });
       return token;
     } catch (error) {
@@ -87,39 +93,18 @@ export const utility = {
   },
   verifyToken: async (token) => {
     try {
-      const blacklistedToken = await blacklistedToken.findUnique({
+      const expiredToken = await blacklistedToken.findUnique({
         where: { token },
       });
 
-      if (blacklistedToken) {
+      if (expiredToken) {
         throw createError(401, "Token has been invalidated");
       }
 
       const decoded = jwt.verify(token, JWT_SECRET_KEY);
-      req.user = decoded;
-
-      return decoded;
+      return decoded.id;
     } catch (error) {
       return handleError(error, "Error verifying token");
-    }
-  },
-  expireToken: async (token) => {
-    try {
-      const decoded = jwt.decode(token);
-      if (!decoded || !decoded.exp) {
-        throw new Error("Invalid token");
-      }
-
-      const expiresAt = new Date(decoded.exp * 1000);
-
-      await blacklistedToken.create({
-        data: {
-          token,
-          expiresAt,
-        },
-      });
-    } catch (error) {
-      return handleError(error, "Error expiring token");
     }
   },
   handleError,
